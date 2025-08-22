@@ -27,19 +27,22 @@ class Arr
     /**
      * Dot notation for get data inside the array
      *
-     * @param array<R>         $_
+     * @param array<int|string, R> $_
      * @param string|array<string> $path
-     * @param non-empty-string $pathSeparator
+     * @param non-empty-string     $pathSeparator
      *
      * @return R
-     * @template R of mixed|array<R>
+     * @template R of mixed|array<int|string, R>
      */
     #[Pure]
-    public static function get(array $_, string|array $path, string $pathSeparator = '.')
+    public static function get(array $_, string|array $path, string $pathSeparator = '.'): mixed
     {
         $propNames = is_array($path) ? $path : explode($pathSeparator, $path);
         $nested = $_;
         foreach ($propNames as $propName) {
+            if (! is_array($nested)) {
+                return $nested;
+            }
             $nested = $nested[$propName];
         }
         return $nested;
@@ -48,7 +51,7 @@ class Arr
     /**
      * Dot notation for set value inside the array.
      *
-     * @param array                                    $_
+     * @param array<int|string, mixed>                 $_
      * @param non-empty-string|array<non-empty-string> $path
      * @param mixed                                    $value
      * @param non-empty-string                         $pathSeparator
